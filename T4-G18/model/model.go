@@ -42,7 +42,6 @@ type Player struct {
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
 	Turns     []Turn    `gorm:"foreignKey:PlayerID;constraint:OnDelete:SET NULL;"`
 	Games     []Game    `gorm:"many2many:player_games;foreignKey:AccountID;joinForeignKey:PlayerID;"`
-	Wins	  int64		`gorm:"default:0"` //aggiunto
 }
 
 func (Player) TableName() string {
@@ -81,39 +80,6 @@ type Turn struct {
 func (Turn) TableName() string {
 	return "turns"
 }
-
-// Hook che si attiva ogni volta che si salva un record nella tabella Turn
-func (pg *Turn) AfterSaveWins(tx *gorm.DB) (err error) {
-	// Ottieni l'ID del giocatore dalla struttura Turn
-	playerID := pg.PlayerID
-
-	// Ottieni il valore IsWinner dalla tabella Turn per il giocatore specifico
-	var isWinner bool
-	result := tx.Model(&Turn{}).Where("player_id = ? AND is_winner = ?", playerID, true).Select("is_winner").Scan(&isWinner)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	// Se isWinner è true, aggiorna il campo Wins nella tabella Player
-	if isWinner {
-		var winsCount int64
-
-		// Calcola il numero di vittorie per il giocatore specifico dalla tabella Turn
-		result := tx.Model(&Turn{}).Where("player_id = ? AND is_winner = ?", playerID, true).Count(&winsCount)
-		if result.Error != nil {
-			return result.Error
-		}
-
-		// Aggiorna il campo Wins nella tabella Player con il numero di vittorie ottenuto
-		result = tx.Model(&Player{}).Where("id = ?", playerID).Update("wins", winsCount)
-		if result.Error != nil {
-			return result.Error
-		}
-	}
-
-	return nil
-}
-
 
 type Metadata struct {
 	ID        int64         `gorm:"primaryKey;autoIncrement"`
