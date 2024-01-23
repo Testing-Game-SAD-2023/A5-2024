@@ -9,7 +9,7 @@ import (
 
 type Game struct {
 	ID           int64      `json:"id"`
-	CurrentRound int        `json:"currentRound"`
+	// rimosso CurrentRound int        `json:"currentRound"`
 	Description  string     `json:"description"`
 	Difficulty   string     `json:"difficulty"`
 	CreatedAt    time.Time  `json:"createdAt"`
@@ -39,7 +39,7 @@ func (CreateRequest) Validate() error {
 }
 
 type UpdateRequest struct {
-	CurrentRound int        `json:"currentRound"`
+	// rimosso CurrentRound int        `json:"currentRound"`
 	Name         string     `json:"name"`
 	Description  string     `json:"description"`
 	StartedAt    *time.Time `json:"startedAt,omitempty"`
@@ -84,7 +84,7 @@ func (a AccountIdType) AsString() string {
 func fromModel(g *model.Game) Game {
 	return Game{
 		ID:           g.ID,
-		CurrentRound: g.CurrentRound,
+		// rimosso CurrentRound: g.CurrentRound,
 		Difficulty:   g.Difficulty,
 		Description:  g.Description.String,
 		CreatedAt:    g.CreatedAt,

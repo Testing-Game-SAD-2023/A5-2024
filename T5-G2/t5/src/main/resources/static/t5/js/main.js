@@ -5,7 +5,7 @@ var difficulty = null;
 //variabili per il login
 var user = null;
 var password = null;
-var classe =  null;
+var classe = null;
 
 // Variabile per tenere traccia del bottone precedentemente selezionato
 var bottonePrecedente1 = null;
@@ -23,9 +23,9 @@ const getCookie = (name) => {
 
 const parseJwt = (token) => {
   try {
-      return JSON.parse(atob(token.split('.')[1]));
+    return JSON.parse(atob(token.split('.')[1]));
   } catch (e) {
-      return null;
+    return null;
   }
 };
 
@@ -38,7 +38,7 @@ function Handlebuttonclass(id, button) {
     classe = id;
     console.log('Hai cliccato sul bottone delle classi con id: ' + classe);
     document.querySelectorAll("span.levels:not(.hidden)").forEach((el) => el.classList.add("hidden"));
-    if(document.getElementById("levels-"+button.id).classList.contains("hidden")) document.getElementById("levels-"+button.id).classList.remove("hidden");
+    if (document.getElementById("levels-" + button.id).classList.contains("hidden")) document.getElementById("levels-" + button.id).classList.remove("hidden");
     // Se il bottone precedentemente selezionato è diverso da null
     // allora rimuoviamo la classe highlighted
     if (bottonePrecedente1 != null) {
@@ -57,11 +57,11 @@ function Handlebuttonclass(id, button) {
 function Handlebuttonrobot(id, button, rob, size) { //modificato
   $(document).ready(function () {
     robot = rob;
-    if(robot == "evosuite"){ // aggiunto
-      difficulty = parseInt(id)-parseInt(size)/2; // devo prendere l'id attuale meno la metà della grandezza totale del vettore di robot
+    if (robot == "evosuite") { // aggiunto
+      difficulty = parseInt(id) - parseInt(size) / 2; // devo prendere l'id attuale meno la metà della grandezza totale del vettore di robot
       difficulty = difficulty.toString();
     }
-    else{ // aggiunto
+    else { // aggiunto
       difficulty = id;
     }
     //difficulty = id;
@@ -132,7 +132,7 @@ function redirectToPagemain() {
 //   password = document.getElementById("password").value;
 // if(user && password ){
 //   alert("Login effettuato con successo");
-  
+
 //   $.ajax({
 //     url:'http://localhost:8082/login-variabiles',
 //     type: 'POST',
@@ -153,19 +153,19 @@ function redirectToPagemain() {
 
 function redirectToPageeditor() {
   $.ajax({
-    url:'http://localhost/api/save-data',
+    url: 'http://localhost/api/save-data',
     data: {
       playerId: parseJwt(getCookie("jwt")).userId,
       classe: classe,
       robot: robot,
       difficulty: difficulty
     },
-    type:'POST',
+    type: 'POST',
     success: function (response) {
       // Gestisci la risposta del server qui
       localStorage.setItem("gameId", response.game_id);
       localStorage.setItem("turnId", response.turn_id);
-      localStorage.setItem("roundId", response.round_id);
+      // rimosso localStorage.setItem("roundId", response.round_id);
       window.location.href = "/editor";
     },
     dataType: "json",
@@ -186,14 +186,14 @@ function downloadFile() {
     fetch(downloadUrl, {
       method: 'GET',
     })
-      .then(function(response) {
+      .then(function (response) {
         if (response.ok) {
           return response.blob();
         } else {
           throw new Error('Errore nella risposta del server');
         }
       })
-      .then(function(blob) {
+      .then(function (blob) {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -201,7 +201,7 @@ function downloadFile() {
         link.click();
         window.URL.revokeObjectURL(url);
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.error('Errore nel download del file', error);
       });
   } else {
@@ -210,22 +210,22 @@ function downloadFile() {
 }
 
 function redirectToLogin() {
-  if(confirm("Sei sicuro di voler effettuare il logout?")){
+  if (confirm("Sei sicuro di voler effettuare il logout?")) {
     fetch('http://localhost/logout', {
-        method: 'GET',
+      method: 'GET',
     })
-    .then(response => {
+      .then(response => {
         if (!response.ok) {
-            throw new Error('Richiesta logout non andata a buon fine');
+          throw new Error('Richiesta logout non andata a buon fine');
         }
-        else{
+        else {
           console.log("stai per essere reindirizzato alla pagina di login");
           window.location.href = "/login";
         }
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   }
 }
 

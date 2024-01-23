@@ -1,4 +1,4 @@
-package round
+/* package round
 
 import (
 	"net/http"
@@ -106,3 +106,9 @@ func (rc *Controller) List(w http.ResponseWriter, r *http.Request) error {
 
 	return api.WriteJson(w, http.StatusOK, rounds)
 }
+ */
+
+ package round
+
+ func empty2() {
+ }

@@ -229,7 +229,8 @@ public class MyController {
 
             // conclusione e salvataggio partita
             // chiusura turno con vincitore
-            HttpPut httpPut = new HttpPut("http://t4-g18-app-1:3000/turns/" + String.valueOf(request.getParameter("turnId")));
+            HttpPut httpPut = new HttpPut(
+                    "http://t4-g18-app-1:3000/turns/" + String.valueOf(request.getParameter("turnId")));
 
             obj = new JSONObject();
             obj.put("scores", String.valueOf(userScore));
@@ -254,25 +255,28 @@ public class MyController {
                 System.out.println("Errore in put turn");
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            // chiusura round
-            httpPut = new HttpPut("http://t4-g18-app-1:3000/rounds/" + String.valueOf(request.getParameter("roundId")));
-
-            obj = new JSONObject();
-
-            obj.put("closedAt", time);
-
-            jsonEntity = new StringEntity(obj.toString(), ContentType.APPLICATION_JSON);
-
-            httpPut.setEntity(jsonEntity);
-
-            response = httpClient.execute(httpPut);
-            httpPut.releaseConnection();
-
-            statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode > 299) {
-                System.out.println("Errore in put round");
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            // rimosso chiusura round
+            /*
+             * httpPut = new HttpPut("http://t4-g18-app-1:3000/rounds/" +
+             * String.valueOf(request.getParameter("roundId")));
+             * 
+             * obj = new JSONObject();
+             * 
+             * obj.put("closedAt", time);
+             * 
+             * jsonEntity = new StringEntity(obj.toString(), ContentType.APPLICATION_JSON);
+             * 
+             * httpPut.setEntity(jsonEntity);
+             * 
+             * response = httpClient.execute(httpPut);
+             * httpPut.releaseConnection();
+             * 
+             * statusCode = response.getStatusLine().getStatusCode();
+             * if (statusCode > 299) {
+             * System.out.println("Errore in put round");
+             * return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+             * }
+             */
             // chiusura gioco
             httpPut = new HttpPut("http://t4-g18-app-1:3000/games/" + String.valueOf(request.getParameter("gameId")));
 
@@ -285,7 +289,7 @@ public class MyController {
 
             response = httpClient.execute(httpPut);
             httpPut.releaseConnection();
-            
+
             statusCode = response.getStatusLine().getStatusCode();
             if (statusCode > 299) {
                 System.out.println("Errore in put game");
@@ -313,29 +317,29 @@ public class MyController {
     // FUNZIONE CHE DOVREBBE RICEVERE I RISULTATI DEI ROBOT
     // @GetMapping("/getResultRobot")
     // public String handleGetResultRobotRequest() {
-    //     try {
-    //         // Esegui la richiesta HTTP al servizio di destinazione
-    //         HttpGet httpGet = new HttpGet("URL_DEL_SERVIZIO_DESTINAZIONE");
+    // try {
+    // // Esegui la richiesta HTTP al servizio di destinazione
+    // HttpGet httpGet = new HttpGet("URL_DEL_SERVIZIO_DESTINAZIONE");
 
-    //         HttpResponse targetServiceResponse = httpClient.execute(httpGet);
+    // HttpResponse targetServiceResponse = httpClient.execute(httpGet);
 
-    //         // Verifica lo stato della risposta
-    //         int statusCode = targetServiceResponse.getStatusLine().getStatusCode();
-    //         if (statusCode == HttpStatus.OK.value()) {
-    //             // Leggi il contenuto del file XML dalla risposta
-    //             HttpEntity entity = targetServiceResponse.getEntity();
-    //             String xmlContent = EntityUtils.toString(entity);
+    // // Verifica lo stato della risposta
+    // int statusCode = targetServiceResponse.getStatusLine().getStatusCode();
+    // if (statusCode == HttpStatus.OK.value()) {
+    // // Leggi il contenuto del file XML dalla risposta
+    // HttpEntity entity = targetServiceResponse.getEntity();
+    // String xmlContent = EntityUtils.toString(entity);
 
-    //             // Restituisci il contenuto del file XML come risposta al client
-    //             return xmlContent;
-    //         } else {
-    //             // Restituisci un messaggio di errore al client
-    //             return "Errore durante il recupero del file XML.";
-    //         }
-    //     } catch (Exception e) {
-    //         // Gestisci eventuali errori e restituisci un messaggio di errore al client
-    //         return "Si è verificato un errore durante la richiesta del file XML.";
-    //     }
+    // // Restituisci il contenuto del file XML come risposta al client
+    // return xmlContent;
+    // } else {
+    // // Restituisci un messaggio di errore al client
+    // return "Errore durante il recupero del file XML.";
+    // }
+    // } catch (Exception e) {
+    // // Gestisci eventuali errori e restituisci un messaggio di errore al client
+    // return "Si è verificato un errore durante la richiesta del file XML.";
+    // }
     // }
 
     @PostMapping("/getJaCoCoReport")
@@ -380,36 +384,39 @@ public class MyController {
 
     // @PostMapping("/inviaDatiEFile")
     // public ResponseEntity<String> handleInviaDatiEFileRequest(
-    //         @RequestParam("idUtente") String idUtente,
-    //         @RequestParam("idPartita") String idPartita,
-    //         @RequestParam("idTurno") String idTurno,
-    //         @RequestParam("robotScelto") String robotScelto,
-    //         @RequestParam("difficolta") String difficolta,
-    //         @RequestParam("file") MultipartFile file,
-    //         @RequestParam("playerTestClass") String playerTestClass) {
-    //     try {
-    //         // Creazione di una richiesta HTTP POST al servizio di destinazione
-    //         HttpPost httpPost = new HttpPost("URL_DEL_SERVIZIO_DESTINAZIONE");// CHIAMA UPDATE TURN TASK4
-    //         // Creazione del corpo della richiesta multipart
-    //         MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create()
-    //                 .addTextBody("idUtente", idUtente)
-    //                 .addTextBody("idPartita", idPartita)
-    //                 .addTextBody("idTurno", idTurno)
-    //                 .addTextBody("robotScelto", robotScelto)
-    //                 .addTextBody("difficolta", difficolta)
-    //                 .addTextBody("playerTestClass", playerTestClass); // Aggiungi la classe Java come parte del corpo
-    //                                                                   // della richiesta
-    //         // .addBinaryBody("file", file.getBytes(), ContentType.APPLICATION_OCTET_STREAM,
-    //         // file.getOriginalFilename());
+    // @RequestParam("idUtente") String idUtente,
+    // @RequestParam("idPartita") String idPartita,
+    // @RequestParam("idTurno") String idTurno,
+    // @RequestParam("robotScelto") String robotScelto,
+    // @RequestParam("difficolta") String difficolta,
+    // @RequestParam("file") MultipartFile file,
+    // @RequestParam("playerTestClass") String playerTestClass) {
+    // try {
+    // // Creazione di una richiesta HTTP POST al servizio di destinazione
+    // HttpPost httpPost = new HttpPost("URL_DEL_SERVIZIO_DESTINAZIONE");// CHIAMA
+    // UPDATE TURN TASK4
+    // // Creazione del corpo della richiesta multipart
+    // MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create()
+    // .addTextBody("idUtente", idUtente)
+    // .addTextBody("idPartita", idPartita)
+    // .addTextBody("idTurno", idTurno)
+    // .addTextBody("robotScelto", robotScelto)
+    // .addTextBody("difficolta", difficolta)
+    // .addTextBody("playerTestClass", playerTestClass); // Aggiungi la classe Java
+    // come parte del corpo
+    // // della richiesta
+    // // .addBinaryBody("file", file.getBytes(),
+    // ContentType.APPLICATION_OCTET_STREAM,
+    // // file.getOriginalFilename());
 
-    //         // Esecuzione della richiesta HTTP al servizio di destinazione
-    //         HttpResponse targetServiceResponse = httpClient.execute(httpPost);
-    //         // Restituisci una risposta di successo
-    //         return ResponseEntity.ok("Dati, file e classe Java inviati con successo");
-    //     } catch (Exception e) {
-    //         // Gestisci eventuali errori e restituisci una risposta di errore
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-    //                 .body("Errore durante l'invio dei dati, del file e della classe Java");
-    //     }
+    // // Esecuzione della richiesta HTTP al servizio di destinazione
+    // HttpResponse targetServiceResponse = httpClient.execute(httpPost);
+    // // Restituisci una risposta di successo
+    // return ResponseEntity.ok("Dati, file e classe Java inviati con successo");
+    // } catch (Exception e) {
+    // // Gestisci eventuali errori e restituisci una risposta di errore
+    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    // .body("Errore durante l'invio dei dati, del file e della classe Java");
+    // }
     // }
 }

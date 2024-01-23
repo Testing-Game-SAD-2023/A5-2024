@@ -1,4 +1,4 @@
-package round
+/* package round
 
 import (
 	"strconv"
@@ -61,3 +61,9 @@ func fromModel(r *model.Round) Round {
 		GameID:      r.GameID,
 	}
 }
+ */
+
+ package round
+
+ func empty3() {
+ }
