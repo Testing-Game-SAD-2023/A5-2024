@@ -80,7 +80,7 @@ public class GameDataWriter {
             obj.put("description", game.getDescription());
             obj.put("startedAt", time);
 
-            JSONArray playersArray = new JSONArray();
+            JSONArray playersArray = new JSONArray(); 
             playersArray.put(String.valueOf(game.getPlayerId()));
 
             obj.put("players", playersArray);
@@ -93,7 +93,7 @@ public class GameDataWriter {
             HttpResponse httpResponse = httpClient.execute(httpPost);
             int statusCode = httpResponse.getStatusLine().getStatusCode();
 
-            if (statusCode > 299) {
+            if(statusCode > 299) {
                 System.err.println(EntityUtils.toString(httpResponse.getEntity()));
                 return null;
             }
@@ -104,41 +104,34 @@ public class GameDataWriter {
 
             Integer game_id = responseObj.getInt("id"); // salvo il game id che l'Api mi restituisce
 
-            /*
-             * rimosso JSONObject round = new JSONObject();
-             * round.put("gameId", game_id);
-             * round.put("testClassId", game.getClasse());
-             * round.put("startedAt", time);
-             */
+            JSONObject round = new JSONObject();
+            round.put("gameId", game_id);
+            round.put("testClassId", game.getClasse());
+            round.put("startedAt", time);
 
-            /*
-             * rimosso httpPost = new HttpPost("http://t4-g18-app-1:3000/rounds");
-             * jsonEntity = new StringEntity(round.toString(),
-             * ContentType.APPLICATION_JSON);
-             * 
-             * httpPost.setEntity(jsonEntity);
-             * 
-             * httpResponse = httpClient.execute(httpPost);
-             * statusCode = httpResponse.getStatusLine().getStatusCode();
-             * 
-             * if (statusCode > 299) {
-             * System.err.println(EntityUtils.toString(httpResponse.getEntity()));
-             * return null;
-             * }
-             * 
-             * responseEntity = httpResponse.getEntity();
-             * responseBody = EntityUtils.toString(responseEntity);
-             * responseObj = new JSONObject(responseBody);
-             */
+            httpPost = new HttpPost("http://t4-g18-app-1:3000/rounds");
+            jsonEntity = new StringEntity(round.toString(), ContentType.APPLICATION_JSON);
 
-            // rimosso Integer round_id = responseObj.getInt("id"); // salvo il round id che
-            // l'Api mi restituisce
+            httpPost.setEntity(jsonEntity);
+
+            httpResponse = httpClient.execute(httpPost);
+            statusCode = httpResponse.getStatusLine().getStatusCode();
+            
+            if(statusCode > 299) {
+                System.err.println(EntityUtils.toString(httpResponse.getEntity()));
+                return null;
+            }
+
+            responseEntity = httpResponse.getEntity();
+            responseBody = EntityUtils.toString(responseEntity);
+            responseObj = new JSONObject(responseBody);
+
+            Integer round_id = responseObj.getInt("id"); // salvo il round id che l'Api mi restituisce
 
             JSONObject turn = new JSONObject();
 
             turn.put("players", playersArray);
-            // rimosso turn.put("roundId", round_id);
-            turn.put("gameId", game_id); // aggiunto
+            turn.put("roundId", round_id);
             turn.put("startedAt", time);
 
             httpPost = new HttpPost("http://t4-g18-app-1:3000/turns");
@@ -148,8 +141,8 @@ public class GameDataWriter {
 
             httpResponse = httpClient.execute(httpPost);
             statusCode = httpResponse.getStatusLine().getStatusCode();
-
-            if (statusCode > 299) {
+            
+            if(statusCode > 299) {
                 System.err.println(EntityUtils.toString(httpResponse.getEntity()));
                 return null;
             }
@@ -158,12 +151,11 @@ public class GameDataWriter {
             responseBody = EntityUtils.toString(responseEntity);
 
             JSONArray responseArrayObj = new JSONArray(responseBody);
-            Integer turn_id = responseArrayObj.getJSONObject(0).getInt("id"); // salvo il turn id che l'Api mi
-                                                                              // restituisce
+            Integer turn_id = responseArrayObj.getJSONObject(0).getInt("id"); // salvo il turn id che l'Api mi restituisce
 
             JSONObject resp = new JSONObject();
             resp.put("game_id", game_id);
-            // rimosso resp.put("round_id", round_id);
+            resp.put("round_id", round_id);
             resp.put("turn_id", turn_id);
 
             return resp;

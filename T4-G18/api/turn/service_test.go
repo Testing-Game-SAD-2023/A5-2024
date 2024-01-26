@@ -41,7 +41,7 @@ func (suite *RepositorySuite) SetupSuite() {
 
 	err = db.AutoMigrate(
 		&model.Game{},
-		// rimosso &model.Round{},
+		&model.Round{},
 		&model.Player{},
 		&model.Turn{},
 		&model.Metadata{},
@@ -67,9 +67,9 @@ func (suite *RepositorySuite) Cleanup() {
 	if err := suite.db.Exec("TRUNCATE TABLE metadata RESTART IDENTITY CASCADE").Error; err != nil {
 		suite.T().Fatal(err)
 	}
-	/* 	if err := suite.db.Exec("TRUNCATE TABLE rounds RESTART IDENTITY CASCADE").Error; err != nil {
+	if err := suite.db.Exec("TRUNCATE TABLE rounds RESTART IDENTITY CASCADE").Error; err != nil {
 		suite.T().Fatal(err)
-	} */
+	}
 	if err := suite.db.Exec("TRUNCATE TABLE players RESTART IDENTITY CASCADE").Error; err != nil {
 		suite.T().Fatal(err)
 	}
@@ -79,41 +79,26 @@ func (suite *RepositorySuite) Cleanup() {
 
 }
 
-// da sistemare test
-
 func (suite *RepositorySuite) SeedTestData() {
 	// Create a game with rounds and turns
 	suite.T().Helper()
 
-	/* rimosso
-		// Create a test game
-	   	game := model.Game{
-	   		Name: "Test Game",
-	   		Rounds: []model.Round{
-	   			{
-	   				Order:       1,
-	   				TestClassId: "test",
-	   				Turns: []model.Turn{
-	   					{
-	   						PlayerID: 1,          // Replace with your desired player ID
-	   						Scores:   "10,20,30", // Replace with your desired scores
-	   					},
-	   					// Add more turns as needed
-	   				},
-	   			},
-	   			// Add more rounds as needed
-	   		},
-	   	} */
-
-	// aggiunto
+	// Create a test game
 	game := model.Game{
 		Name: "Test Game",
-		Turns: []model.Turn{
+		Rounds: []model.Round{
 			{
-				PlayerID: 1,          // Sostituisci con il tuo ID giocatore desiderato
-				Scores:   "10,20,30", // Sostituisci con i tuoi punteggi desiderati
+				Order:       1,
+				TestClassId: "test",
+				Turns: []model.Turn{
+					{
+						PlayerID: 1,          // Replace with your desired player ID
+						Scores:   "10,20,30", // Replace with your desired scores
+					},
+					// Add more turns as needed
+				},
 			},
-			// Aggiungi altri turni secondo necessità
+			// Add more rounds as needed
 		},
 	}
 

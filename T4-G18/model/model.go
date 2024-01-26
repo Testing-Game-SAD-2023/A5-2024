@@ -6,18 +6,17 @@ import (
 )
 
 type Game struct {
-	// rimosso CurrentRound int   `gorm:"default:1"`
-	ID          int64 `gorm:"primaryKey;autoIncrement"`
-	Name        string
-	Description sql.NullString `gorm:"default:null"`
-	Difficulty  string
-	CreatedAt   time.Time  `gorm:"autoCreateTime"`
-	UpdatedAt   time.Time  `gorm:"autoUpdateTime"`
-	StartedAt   *time.Time `gorm:"default:null"`
-	ClosedAt    *time.Time `gorm:"default:null"`
-	//Rounds       []Round    `gorm:"foreignKey:GameID;constraint:OnDelete:CASCADE;"`
-	Turns   []Turn   `gorm:"foreignKey:GameID;constraint:OnDelete:CASCADE;"` // aggiunto
-	Players []Player `gorm:"many2many:player_games;foreignKey:ID;joinForeignKey:GameID;References:AccountID;joinReferences:PlayerID"`
+	CurrentRound int   `gorm:"default:1"`
+	ID           int64 `gorm:"primaryKey;autoIncrement"`
+	Name         string
+	Description  sql.NullString `gorm:"default:null"`
+	Difficulty   string
+	CreatedAt    time.Time  `gorm:"autoCreateTime"`
+	UpdatedAt    time.Time  `gorm:"autoUpdateTime"`
+	StartedAt    *time.Time `gorm:"default:null"`
+	ClosedAt     *time.Time `gorm:"default:null"`
+	Rounds       []Round    `gorm:"foreignKey:GameID;constraint:OnDelete:CASCADE;"`
+	Players      []Player   `gorm:"many2many:player_games;foreignKey:ID;joinForeignKey:GameID;References:AccountID;joinReferences:PlayerID"`
 }
 
 func (Game) TableName() string {
@@ -49,8 +48,7 @@ func (Player) TableName() string {
 	return "players"
 }
 
-/* rimosso
-	type Round struct {
+type Round struct {
 	ID          int64      `gorm:"primaryKey;autoIncrement"`
 	Order       int        `gorm:"not null;default:1"`
 	StartedAt   *time.Time `gorm:"default:null"`
@@ -60,13 +58,11 @@ func (Player) TableName() string {
 	Turns       []Turn     `gorm:"foreignKey:RoundID;constraint:OnDelete:CASCADE;"`
 	TestClassId string     `gorm:"not null"`
 	GameID      int64      `gorm:"not null"`
-} */
+}
 
-/*
-	 func (Round) TableName() string {
-		return "rounds"
-	}
-*/
+func (Round) TableName() string {
+	return "rounds"
+}
 
 type Turn struct {
 	ID        int64      `gorm:"primaryKey;autoIncrement"`
@@ -78,8 +74,7 @@ type Turn struct {
 	Scores    string     `gorm:"default:null"`
 	IsWinner  bool       `gorm:"default:false"`
 	PlayerID  int64      `gorm:"index:idx_playerturn,unique;not null"`
-	// rimosso RoundID   int64      `gorm:"index:idx_playerturn,unique;not null"`
-	GameID int64 `gorm:"index:idx_playerturn,unique;not null"` // aggiunto
+	RoundID   int64      `gorm:"index:idx_playerturn,unique;not null"`
 }
 
 func (Turn) TableName() string {

@@ -25,7 +25,7 @@ func TestCleanup(t *testing.T) {
 	}
 	err = db.AutoMigrate(
 		&model.Game{},
-		// rimosso &model.Round{},
+		&model.Round{},
 		&model.Player{},
 		&model.Turn{},
 		&model.Metadata{},

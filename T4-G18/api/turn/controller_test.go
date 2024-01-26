@@ -45,9 +45,9 @@ func (suite *ControllerSuite) SetupSuite() {
 			mock.MatchedBy(func(id int64) bool { return id != 1 }),
 			mock.Anything).
 		Return(api.ErrNotFound).
-		On("CreateBulk", &CreateRequest{GameID: 1}).
+		On("CreateBulk", &CreateRequest{RoundId: 1}).
 		Return([]Turn{}, nil).
-		On("CreateBulk", mock.MatchedBy(func(r *CreateRequest) bool { return r.GameID != 1 })).
+		On("CreateBulk", mock.MatchedBy(func(r *CreateRequest) bool { return r.RoundId != 1 })).
 		Return(nil, api.ErrNotFound).
 		On("FindById", int64(1)).
 		Return(Turn{ID: 1}, nil).
@@ -64,9 +64,9 @@ func (suite *ControllerSuite) SetupSuite() {
 		On("Update", mock.MatchedBy(func(id int64) bool { return id != 1 }),
 			&UpdateRequest{IsWinner: true, Scores: "a"}).
 		Return(nil, api.ErrNotFound).
-		On("FindByGame", int64(1)).
+		On("FindByRound", int64(1)).
 		Return([]Turn{}, nil).
-		On("FindByGame", mock.MatchedBy(func(id int64) bool { return id != 1 })).
+		On("FindByRound", mock.MatchedBy(func(id int64) bool { return id != 1 })).
 		Return(nil, api.ErrNotFound)
 
 	suite.tmpDir = os.TempDir()
@@ -130,15 +130,15 @@ func (suite *ControllerSuite) TestCreate() {
 		{
 			Name:           "T02-04-BadJson",
 			ExpectedStatus: http.StatusBadRequest,
-			Body:           `{}`,
+			Body:           `{"roundId": 34`,
 		},
 		{
 			Name:           "T02-05-TurnCreated",
 			ExpectedStatus: http.StatusCreated,
-			Body:           `{"playerId": 1}`,
+			Body:           `{"roundId": 1, "playerId": 1}`,
 		},
 		{
-			Name:           "T02-06-GameNotExists",
+			Name:           "T02-06-RoundNotExists",
 			ExpectedStatus: http.StatusNotFound,
 			Body:           `{"turnId": 2}`,
 		},
@@ -247,7 +247,6 @@ func (suite *ControllerSuite) TestUpdate() {
 	}
 
 }
-
 func (suite *ControllerSuite) TestList() {
 
 	tcs := []struct {
@@ -266,7 +265,7 @@ func (suite *ControllerSuite) TestList() {
 			Input:          "invalid",
 		},
 		{
-			Name:           "T02-16-GameNotFound",
+			Name:           "T02-16-RoundNotFound",
 			ExpectedStatus: http.StatusNotFound,
 			Input:          "2",
 		},
@@ -276,7 +275,7 @@ func (suite *ControllerSuite) TestList() {
 		tc := tc
 		suite.T().Run(tc.Name, func(t *testing.T) {
 			q := url.Values{}
-			q.Add("GameId", tc.Input)
+			q.Add("roundId", tc.Input)
 			url := fmt.Sprintf("%s?%s", suite.tServer.URL, q.Encode())
 			res, err := http.Get(url)
 			suite.NoError(err)
@@ -414,19 +413,7 @@ func (m *MockedRepository) Delete(id int64) error {
 	return args.Error(0)
 }
 
-/* rimosso mock di FindByRound
 func (m *MockedRepository) FindByRound(id int64) ([]Turn, error) {
-	args := m.Called(id)
-	v := args.Get(0)
-
-	if v == nil {
-		return nil, args.Error(1)
-	}
-	return v.([]Turn), args.Error(1)
-} */
-
-// aggiunto mock di FindByGame
-func (m *MockedRepository) FindByGame(id int64) ([]Turn, error) {
 	args := m.Called(id)
 	v := args.Get(0)
 

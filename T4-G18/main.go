@@ -16,9 +16,8 @@ import (
 
 	"github.com/alarmfox/game-repository/api"
 	"github.com/alarmfox/game-repository/api/game"
-
-	// rimosso import di round
 	"github.com/alarmfox/game-repository/api/robot"
+	"github.com/alarmfox/game-repository/api/round"
 	"github.com/alarmfox/game-repository/api/turn"
 	"github.com/alarmfox/game-repository/limiter"
 	"github.com/alarmfox/game-repository/model"
@@ -95,8 +94,8 @@ func run(ctx context.Context, c Configuration) error {
 
 	err = db.AutoMigrate(
 		&model.Game{},
+		&model.Round{},
 		&model.Player{},
-		// rimosso model.round
 		&model.Turn{},
 		&model.Metadata{},
 		&model.PlayerGame{},
@@ -165,7 +164,8 @@ func run(ctx context.Context, c Configuration) error {
 			// game endpoint
 			gameController = game.NewController(game.NewRepository(db))
 
-			// rimosso roundController endpoint
+			// round endpoint
+			roundController = round.NewController(round.NewRepository(db))
 
 			// turn endpoint
 			turnController = turn.NewController(turn.NewRepository(db, c.DataDir))
@@ -176,7 +176,7 @@ func run(ctx context.Context, c Configuration) error {
 
 		r.Mount(c.ApiPrefix, setupRoutes(
 			gameController,
-			// rimosso roundController
+			roundController,
 			turnController,
 			robotController,
 		))
@@ -303,8 +303,7 @@ func makeDefaults(c *Configuration) {
 
 }
 
-// rimosso  rc *round.Controller dai valori passati
-func setupRoutes(gc *game.Controller, tc *turn.Controller, roc *robot.Controller) *chi.Mux {
+func setupRoutes(gc *game.Controller, rc *round.Controller, tc *turn.Controller, roc *robot.Controller) *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(api.WithMaximumBodySize(api.DefaultBodySize))
@@ -329,15 +328,31 @@ func setupRoutes(gc *game.Controller, tc *turn.Controller, roc *robot.Controller
 
 	})
 
-	// rimosso codice per round
+	r.Route("/rounds", func(r chi.Router) {
+		// Get round
+		r.Get("/{id}", api.HandlerFunc(rc.FindByID))
+
+		// List rounds
+		r.Get("/", api.HandlerFunc(rc.List))
+
+		// Create round
+		r.With(middleware.AllowContentType("application/json")).
+			Post("/", api.HandlerFunc(rc.Create))
+
+		// Update round
+		r.With(middleware.AllowContentType("application/json")).
+			Put("/{id}", api.HandlerFunc(rc.Update))
+
+		// Delete round
+		r.Delete("/{id}", api.HandlerFunc(rc.Delete))
+
+	})
 
 	r.Route("/turns", func(r chi.Router) {
 		// Get turn
 		r.Get("/{id}", api.HandlerFunc(tc.FindByID))
 
 		// List turn
-		// rimosso funzione list
-		// riaggiunta perchè modificata
 		r.Get("/", api.HandlerFunc(tc.List))
 
 		// Create turn
