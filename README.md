@@ -1,15 +1,17 @@
-# Task 11 - Gruppo 41
+# Task 4 - Gruppo A3
 Componenti:
-- Luigi Cecere - M63/1413
-- Chiara Capocello - M63/1451
-- Giovanni Gentile - M63/1450
-- Michelangelo Formato - M63/1519
+- Valerio Domenico Conte - M63001606
+- Nike Di Giacomo - M63001641
+- Alessandro Falino - M63001658
+
+## Requisito R2
+Il lavoro da noi svolto si colloca all'interno del progetto ENACTEST, che ha come obiettivo la creazione e lo sviluppo di un gioco con lo scopo di promuovere l'attività di testing e permettere ai partecipanti di cimentarsi in sfide contro sistemi automatizzati ed eventualmente altri giocatori.
+Per portare a termine i nostri compiti siamo partiti dai risultati raggiunti dai gruppi A1-A8, in particolare dal loro repository GitHub consultabile al seguente link: https://github.com/exo404/A1-A8-2024.
+Il requisito assegnato al nostro Team durante il corso di Software Architecture Design 2023/2024 è il seguente:
+_Verificare e gestire la coerenza dei dati della partita del giocatore attualmente salvati nel File System di T8 con quelli mantenuti nel database del gioco in T4.
+Eventualmente rivedere le API offerte da T4 per consentire di salvare anche i dati relativi ai Turni di gioco in T4._
 
 # GUIDA ALL'INSTALLAZIONE
-
-Consultare la documentazione al seguente link per una versione aggiornata:
-
-https://github.com/exo404/A1-A8-2024/tree/main/T1-G11/documentazione
 
 ## PASSO 1
 Scaricare Docker Desktop per il proprio sistema operativo.
@@ -41,7 +43,7 @@ Per fare ciò bisogna fare le seguenti operazioni:
         db.interaction.createIndex({ name: "text" })
         db.Admin.createIndex({username: 1})
 
-L'intera applicazione è adesso pienamente configurata e raggiungibile sulla porta :80. Per una guida all'installazione e all'utilizzo più completa consultare la documentazione al capitolo 8.
+L'intera applicazione è adesso pienamente configurata e raggiungibile sulla porta :80. Per una guida all'installazione e all'utilizzo più completa consultare la documentazione al capitolo 5.
 
 # VIDEO DIMOSTRAZIONE
 ## Admin
@@ -58,6 +60,3 @@ https://github.com/Testing-Game-SAD-2023/T11-G41/assets/128593973/e4e1ef4d-f2f3-
 
 https://github.com/Testing-Game-SAD-2023/T11-G41/assets/128593973/c94398b2-178e-4b7f-a6d6-685c2689c03c
 
-## Precaricamento classi e test
-
-https://github.com/exo404/A1-A8-2024/blob/main/T1-G11/documentazione/Precaricamento%20test%20e%20classi.mp4

@@ -1,36 +1,18 @@
 package com.g2.Model;
 
-import java.time.*;
-
 public class Game {
-    private int playerId;
     private long id;
-    private String description;
     private String name;
+    private int round;
+    private String testedClass;
+    private String description;
     private String difficulty;
-    private LocalDate data_creazione;
-    private String ora_creazione;
-    private String classe;
-
-    public void setClasse(String classe) {
-        this.classe = classe;
-    }
-
-    public Game(int playerId, String description, String name, String difficulty) {
-        this.playerId = playerId;
-        this.description = description;
-        this.name = name;
-        this.difficulty = difficulty;
-        this.classe = "";
-    }
-
-    public int getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(int playerId) {
-        this.playerId = playerId;
-    }
+    private String createdAt;
+    private String updatedAt;
+    private String startedAt;
+    private String closedAt;
+    private long playerId; // Adattare per il multi-player
+    private String robot; // Adattare a long
 
     public long getId() {
         return id;
@@ -38,14 +20,6 @@ public class Game {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getName() {
@@ -56,6 +30,30 @@ public class Game {
         this.name = name;
     }
 
+    public int getRound() {
+        return round;
+    }
+
+    public void setRound(int round) {
+        this.round = round;
+    }
+
+    public String getTestedClass() {
+        return testedClass;
+    }
+
+    public void setTestedClass(String testedClass) {
+        this.testedClass = testedClass;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getDifficulty() {
         return difficulty;
     }
@@ -64,24 +62,51 @@ public class Game {
         this.difficulty = difficulty;
     }
 
-    public LocalDate getData_creazione() {
-        return data_creazione;
+    public String getCreatedAt() {
+        return createdAt;
     }
 
-    public void setData_creazione(LocalDate data_creazione) {
-        this.data_creazione = data_creazione;
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public String getOra_creazione() {
-        return ora_creazione;
+    public String getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setOra_creazione(String ora_creazione) {
-        this.ora_creazione = ora_creazione;
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
-    public String getClasse() {
-        return classe;
+    public String getStartedAt() {
+        return startedAt;
     }
 
+    public void setStartedAt(String startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public String getClosedAt() {
+        return closedAt;
+    }
+
+    public void setClosedAt(String closedAt) {
+        this.closedAt = closedAt;
+    }
+
+    public long getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(long playerId) {
+        this.playerId = playerId;
+    }
+
+    public String getRobot() {
+        return robot;
+    }
+
+    public void setRobot(String robot) {
+        this.robot = robot;
+    }
 }

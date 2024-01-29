@@ -5,18 +5,37 @@ import (
 	"time"
 )
 
+/*
+	type Game struct {
+		CurrentRound int   `gorm:"default:1"`
+		ID           int64 `gorm:"primaryKey;autoIncrement"`
+		Name         string
+		Description  sql.NullString `gorm:"default:null"`
+		Difficulty   string
+		CreatedAt    time.Time  `gorm:"autoCreateTime"`
+		UpdatedAt    time.Time  `gorm:"autoUpdateTime"`
+		StartedAt    *time.Time `gorm:"default:null"`
+		ClosedAt     *time.Time `gorm:"default:null"`
+		Rounds       []Round    `gorm:"foreignKey:GameID;constraint:OnDelete:CASCADE;"`
+		Players      []Player   `gorm:"many2many:player_games;foreignKey:ID;joinForeignKey:GameID;References:AccountID;joinReferences:PlayerID"`
+	}
+*/
+
 type Game struct {
-	CurrentRound int   `gorm:"default:1"`
-	ID           int64 `gorm:"primaryKey;autoIncrement"`
-	Name         string
-	Description  sql.NullString `gorm:"default:null"`
-	Difficulty   string
-	CreatedAt    time.Time  `gorm:"autoCreateTime"`
-	UpdatedAt    time.Time  `gorm:"autoUpdateTime"`
-	StartedAt    *time.Time `gorm:"default:null"`
-	ClosedAt     *time.Time `gorm:"default:null"`
-	Rounds       []Round    `gorm:"foreignKey:GameID;constraint:OnDelete:CASCADE;"`
-	Players      []Player   `gorm:"many2many:player_games;foreignKey:ID;joinForeignKey:GameID;References:AccountID;joinReferences:PlayerID"`
+	ID          int64          `gorm:"primaryKey;autoIncrement"`
+	Name        string         `gorm:"not null"`
+	Round       int            `gorm:"default:1"`
+	Class       string         `gorm:"not null"`
+	Description sql.NullString `gorm:"default:null"`
+	Difficulty  string         `gorm:"not null"`
+	CreatedAt   time.Time      `gorm:"autoCreateTime"`
+	UpdatedAt   time.Time      `gorm:"autoUpdateTime"`
+	StartedAt   *time.Time     `gorm:"default:null"`
+	ClosedAt    *time.Time     `gorm:"default:null"`
+	Players     []Player       `gorm:"many2many:player_games;foreignKey:ID;joinForeignKey:GameID;References:AccountID;joinReferences:PlayerID"`
+	Robot       int64          `gorm:"default:null"`
+	// Future implementazione di partite con più rounds
+	//Rounds       []Round    		`gorm:"foreignKey:GameID;constraint:OnDelete:CASCADE;"`
 }
 
 func (Game) TableName() string {
@@ -50,7 +69,6 @@ func (Player) TableName() string {
 
 type Round struct {
 	ID          int64      `gorm:"primaryKey;autoIncrement"`
-	Order       int        `gorm:"not null;default:1"`
 	StartedAt   *time.Time `gorm:"default:null"`
 	ClosedAt    *time.Time `gorm:"default:null"`
 	UpdatedAt   time.Time  `gorm:"autoUpdateTime"`
@@ -65,16 +83,16 @@ func (Round) TableName() string {
 }
 
 type Turn struct {
-	ID        int64      `gorm:"primaryKey;autoIncrement"`
+	ID        int64      `gorm:"primaryKey"`
+	RoundID   int64      `gorm:"primaryKey"`
 	CreatedAt time.Time  `gorm:"autoCreateTime"`
 	UpdatedAt time.Time  `gorm:"autoUpdateTime"`
 	StartedAt *time.Time `gorm:"default:null"`
 	ClosedAt  *time.Time `gorm:"default:null"`
-	Metadata  Metadata   `gorm:"foreignKey:TurnID;constraint:OnDelete:SET NULL;"`
+	Metadata  Metadata   `gorm:"foreignKey:TurnID,RoundID;references:ID,RoundID;constraint:OnDelete:SET NULL;"`
 	Scores    string     `gorm:"default:null"`
 	IsWinner  bool       `gorm:"default:false"`
-	PlayerID  int64      `gorm:"index:idx_playerturn,unique;not null"`
-	RoundID   int64      `gorm:"index:idx_playerturn,unique;not null"`
+	PlayerID  int64      `gorm:"index:idx_playerturn;not null"`
 }
 
 func (Turn) TableName() string {
@@ -85,7 +103,8 @@ type Metadata struct {
 	ID        int64         `gorm:"primaryKey;autoIncrement"`
 	CreatedAt time.Time     `gorm:"autoCreateTime"`
 	UpdatedAt time.Time     `gorm:"autoUpdateTime"`
-	TurnID    sql.NullInt64 `gorm:"unique"`
+	TurnID    sql.NullInt64 `gorm:"unique;not null"`
+	RoundID   sql.NullInt64 `gorm:"unique;not null"`
 	Path      string        `gorm:"unique;not null"`
 }
 

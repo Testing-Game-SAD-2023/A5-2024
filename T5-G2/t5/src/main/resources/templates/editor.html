@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang = "en" xmlns:th="http://thymeleaf.org">
+<html xmlns:th="http://thymeleaf.org">
 <head>
     <title>Editor di Testo</title>
     <link rel="stylesheet" th:href="@{./t5/codemirror/lib/codemirror.css}"/>
@@ -446,7 +446,7 @@ public class TestClasse {
       
       <div class="container2">
         <div class="top-bar2">
-          Compare results
+          Confronto risultati
         </div>
         <div class="console">
           <textarea id="console-textarea2"></textarea>
@@ -456,7 +456,7 @@ public class TestClasse {
   </div>
 
     <script>
-      var turno = 0; // numero di turni giocati fino ad ora
+      var turno = 1; // numero di turni giocati fino ad ora
       var perc_robot = '0'; // percentuale di copertura del robot scelto
 
       const getCookie = (name) => {
@@ -819,21 +819,18 @@ public class TestClasse {
                   //console.log(localStorage.getItem("turnId"));
 
                   $.ajax({
-                    url:'http://localhost/api/save-data',
+                    url:'http://localhost/api/update-data',
                     data: {
                       playerId: parseJwt(getCookie("jwt")).userId,
-                      classe: localStorage.getItem("classe"),
-                      robot: localStorage.getItem("robot"),
-                      difficulty: localStorage.getItem("difficulty")
+                      turnId: localStorage.getItem("turnId")
                     },
                     type:'POST',
                     success: function (response) {
-                      // Gestisci la risposta del server qui
-                      localStorage.setItem("gameId", response.game_id);
+                      console.log(response);
+                      
                       localStorage.setItem("turnId", response.turn_id);
-                      localStorage.setItem("roundId", response.round_id);
                       console.log(localStorage.getItem("turnId"));
-                      turno++; // incremento il numero di turno giocati fino ad ora
+
                       //window.location.href = "/editor";
                     },
                     dataType: "json",
