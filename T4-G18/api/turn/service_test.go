@@ -114,8 +114,8 @@ func (suite *RepositorySuite) SeedTestData() {
 
 	// Create a player-game relationship
 	playerGame := model.PlayerGame{
-		PlayerID: "testplayer", // Replace with the player ID
-		GameID:   1,            // Replace with the game ID
+		PlayerID: 1, // Replace with the player ID
+		GameID:   1, // Replace with the game ID
 	}
 
 	// Save the test data to the database

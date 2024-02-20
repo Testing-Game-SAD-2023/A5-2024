@@ -6,17 +6,20 @@ import (
 )
 
 type Game struct {
-	CurrentRound int   `gorm:"default:1"`
-	ID           int64 `gorm:"primaryKey;autoIncrement"`
-	Name         string
+	CurrentRound int            `gorm:"default:1"`
+	ID           int64          `gorm:"primaryKey;autoIncrement"`
+	Name         string         `gorm:"default:null"`
 	Description  sql.NullString `gorm:"default:null"`
-	Difficulty   string
-	CreatedAt    time.Time  `gorm:"autoCreateTime"`
-	UpdatedAt    time.Time  `gorm:"autoUpdateTime"`
-	StartedAt    *time.Time `gorm:"default:null"`
-	ClosedAt     *time.Time `gorm:"default:null"`
-	Rounds       []Round    `gorm:"foreignKey:GameID;constraint:OnDelete:CASCADE;"`
-	Players      []Player   `gorm:"many2many:player_games;foreignKey:ID;joinForeignKey:GameID;References:AccountID;joinReferences:PlayerID"`
+	Difficulty   string          `gorm:"default:null"`
+	CreatedAt    time.Time      `gorm:"autoCreateTime"`
+	UpdatedAt    time.Time      `gorm:"autoUpdateTime"`
+	StartedAt    *time.Time     `gorm:"default:null"`
+	ClosedAt     *time.Time     `gorm:"default:null"`
+	Rounds       []Round        `gorm:"foreignKey:GameID;constraint:OnDelete:CASCADE;"`
+	Players      []Player       `gorm:"many2many:player_games;foreignKey:ID;joinForeignKey:GameID;References:AccountID;joinReferences:PlayerID"`
+	Duration     string         `gorm:"default:null"` // aggiunto
+	Robot        string         `gorm:"default:null"` // aggiunto
+	Class        string         `gorm:"default:null"` // aggiunto
 }
 
 func (Game) TableName() string {
@@ -24,7 +27,7 @@ func (Game) TableName() string {
 }
 
 type PlayerGame struct {
-	PlayerID  string    `gorm:"primaryKey"`
+	PlayerID  int64     `gorm:"primaryKey"` //aggiunto messo a int
 	GameID    int64     `gorm:"primaryKey"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
@@ -36,12 +39,14 @@ func (PlayerGame) TableName() string {
 }
 
 type Player struct {
-	ID        int64     `gorm:"primaryKey;autoIncrement"`
-	AccountID string    `gorm:"unique"`
-	CreatedAt time.Time `gorm:"autoCreateTime"`
-	UpdatedAt time.Time `gorm:"autoUpdateTime"`
-	Turns     []Turn    `gorm:"foreignKey:PlayerID;constraint:OnDelete:SET NULL;"`
-	Games     []Game    `gorm:"many2many:player_games;foreignKey:AccountID;joinForeignKey:PlayerID;"`
+	ID              int64         `gorm:"primaryKey;autoIncrement"`
+	AccountID       string        `gorm:"unique"`
+	CreatedAt       time.Time     `gorm:"autoCreateTime"`
+	UpdatedAt       time.Time     `gorm:"autoUpdateTime"`
+	Turns           []Turn        `gorm:"foreignKey:PlayerID;constraint:OnDelete:SET NULL;"`
+	Games           []Game        `gorm:"many2many:player_games;foreignKey:AccountID;joinForeignKey:PlayerID;"`
+	Wins            int64         `gorm:"default:0"` // aggiunto
+	TotalTimePlayed time.Duration `gorm:"default:0"` // aggiunto // è in nanosecondi, quando lo si scarica bisogna convertire
 }
 
 func (Player) TableName() string {

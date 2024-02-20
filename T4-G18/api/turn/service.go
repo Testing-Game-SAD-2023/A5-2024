@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -28,7 +29,6 @@ func NewRepository(db *gorm.DB, dataDir string) *Repository {
 		dataDir: dataDir,
 	}
 }
-
 func (tr *Repository) CreateBulk(r *CreateRequest) ([]Turn, error) {
 	turns := make([]model.Turn, len(r.Players))
 
@@ -86,7 +86,31 @@ func (tr *Repository) Update(id int64, r *UpdateRequest) (Turn, error) {
 		err  error
 	)
 
+	// Ottieni lo stato attuale del turno prima dell'aggiornamento
+	var currentTurn model.Turn
+	err = tr.db.First(&currentTurn, id).Error
+	if err != nil {
+		return Turn{}, api.MakeServiceError(err)
+	}
+
+	// Aggiorna il turno con i nuovi valori
 	err = tr.db.Model(&turn).Updates(r).Error
+	if err != nil {
+		return Turn{}, api.MakeServiceError(err)
+	}
+
+	// Controlla se il turno è stato aggiornato
+	// !currentTurn.IsWinner serve per vedere se prima non era gia vinto il turno, visto che update la chiamiamo per il momento solo nel caso in cui abbiamo appena vinto, non serve
+	// in futuro potrebbe essere utile
+	if r.IsWinner /* && !currentTurn.IsWinner  */ {
+		// Incrementa il conteggio delle vittorie del giocatore
+		err := tr.db.Model(&model.Player{}).Where("ID = ?", currentTurn.PlayerID).Update("Wins", gorm.Expr("Wins + ?", 1)).Error
+		if err != nil {
+			log.Printf("Errore nell'aggiornamento delle vittorie per il giocatore con ID %d: %v\n", currentTurn.PlayerID, err)
+
+		}
+
+	}
 
 	return fromModel(&turn), api.MakeServiceError(err)
 }

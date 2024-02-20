@@ -79,8 +79,10 @@ public class GameDataWriter {
             obj.put("name", game.getName());
             obj.put("description", game.getDescription());
             obj.put("startedAt", time);
+            obj.put("robot", game.getRobot()); // aggiunto
+            obj.put("class", game.getClasse()); // aggiunto
 
-            JSONArray playersArray = new JSONArray(); 
+            JSONArray playersArray = new JSONArray();
             playersArray.put(String.valueOf(game.getPlayerId()));
 
             obj.put("players", playersArray);
@@ -93,7 +95,7 @@ public class GameDataWriter {
             HttpResponse httpResponse = httpClient.execute(httpPost);
             int statusCode = httpResponse.getStatusLine().getStatusCode();
 
-            if(statusCode > 299) {
+            if (statusCode > 299) {
                 System.err.println(EntityUtils.toString(httpResponse.getEntity()));
                 return null;
             }
@@ -116,8 +118,8 @@ public class GameDataWriter {
 
             httpResponse = httpClient.execute(httpPost);
             statusCode = httpResponse.getStatusLine().getStatusCode();
-            
-            if(statusCode > 299) {
+
+            if (statusCode > 299) {
                 System.err.println(EntityUtils.toString(httpResponse.getEntity()));
                 return null;
             }
@@ -141,8 +143,8 @@ public class GameDataWriter {
 
             httpResponse = httpClient.execute(httpPost);
             statusCode = httpResponse.getStatusLine().getStatusCode();
-            
-            if(statusCode > 299) {
+
+            if (statusCode > 299) {
                 System.err.println(EntityUtils.toString(httpResponse.getEntity()));
                 return null;
             }
@@ -151,7 +153,8 @@ public class GameDataWriter {
             responseBody = EntityUtils.toString(responseEntity);
 
             JSONArray responseArrayObj = new JSONArray(responseBody);
-            Integer turn_id = responseArrayObj.getJSONObject(0).getInt("id"); // salvo il turn id che l'Api mi restituisce
+            Integer turn_id = responseArrayObj.getJSONObject(0).getInt("id"); // salvo il turn id che l'Api mi
+                                                                              // restituisce
 
             JSONObject resp = new JSONObject();
             resp.put("game_id", game_id);

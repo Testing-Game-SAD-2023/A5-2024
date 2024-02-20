@@ -11,18 +11,23 @@ public class Game {
     private LocalDate data_creazione;
     private String ora_creazione;
     private String classe;
+    private String robot; // aggiunto
 
     public void setClasse(String classe) {
         this.classe = classe;
     }
 
-    public Game(int playerId, String description, String name, String difficulty) {
-        this.playerId = playerId;
-        this.description = description;
-        this.name = name;
-        this.difficulty = difficulty;
-        this.classe = "";
-    }
+    /*
+     * rimosso
+     * public Game(int playerId, String description, String name, String difficulty)
+     * {
+     * this.playerId = playerId;
+     * this.description = description;
+     * this.name = name;
+     * this.difficulty = difficulty;
+     * this.classe = "";
+     * }
+     */
 
     public int getPlayerId() {
         return playerId;
@@ -82,6 +87,15 @@ public class Game {
 
     public String getClasse() {
         return classe;
+    }
+
+    // aggiunto: get e set di robot
+    public String getRobot() {
+        return robot;
+    }
+
+    public void setRobot(String robot) {
+        this.robot = robot;
     }
 
 }

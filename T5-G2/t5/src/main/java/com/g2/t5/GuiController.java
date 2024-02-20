@@ -56,6 +56,8 @@ public class GuiController {
     // private Map<Integer, String> hashMap2 = new HashMap<>();
     // private final FileController fileController;
     private RestTemplate restTemplate;
+    private GameDataWriter gameDataWriter = new GameDataWriter();
+    private Game g = new Game();
 
     @Autowired
     public GuiController(RestTemplate restTemplate) {
@@ -70,9 +72,10 @@ public class GuiController {
     public List<String> getLevels(String className) {
         List<String> result = new ArrayList<String>();
 
-        for(int i = 1; i < 11; i++) {
+        for (int i = 1; i < 11; i++) {
             try {
-                restTemplate.getForEntity("http://t4-g18-app-1:3000/robots?testClassId=" + className + "&type=randoop&difficulty="+String.valueOf(i), Object.class);
+                restTemplate.getForEntity("http://t4-g18-app-1:3000/robots?testClassId=" + className
+                        + "&type=randoop&difficulty=" + String.valueOf(i), Object.class);
             } catch (Exception e) {
                 break;
             }
@@ -85,8 +88,8 @@ public class GuiController {
 
     public List<ClassUT> getClasses() {
         ResponseEntity<List<ClassUT>> responseEntity = restTemplate.exchange("http://manvsclass-controller-1:8080/home",
-            HttpMethod.GET, null, new ParameterizedTypeReference<List<ClassUT>>() {
-        });
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<ClassUT>>() {
+                });
 
         return responseEntity.getBody();
     }
@@ -96,9 +99,11 @@ public class GuiController {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<String, String>();
         formData.add("jwt", jwt);
 
-        Boolean isAuthenticated = restTemplate.postForObject("http://t23-g1-app-1:8080/validateToken", formData, Boolean.class);
+        Boolean isAuthenticated = restTemplate.postForObject("http://t23-g1-app-1:8080/validateToken", formData,
+                Boolean.class);
 
-        if(isAuthenticated == null || !isAuthenticated) return "redirect:/login";
+        if (isAuthenticated == null || !isAuthenticated)
+            return "redirect:/login";
 
         // fileController.listFilesInFolder("/app/AUTName/AUTSourceCode");
         // int size = fileController.getClassSize();
@@ -143,9 +148,11 @@ public class GuiController {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<String, String>();
         formData.add("jwt", jwt);
 
-        Boolean isAuthenticated = restTemplate.postForObject("http://t23-g1-app-1:8080/validateToken", formData, Boolean.class);
+        Boolean isAuthenticated = restTemplate.postForObject("http://t23-g1-app-1:8080/validateToken", formData,
+                Boolean.class);
 
-        if(isAuthenticated == null || !isAuthenticated) return "redirect:/login";
+        if (isAuthenticated == null || !isAuthenticated)
+            return "redirect:/login";
         // valueclass = hashMap.get(myClass);
         // valuerobot = hashMap2.get(myRobot);
 
@@ -175,36 +182,6 @@ public class GuiController {
     // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Si è
     // verificato un errore interno");
     // }
-
-    @PostMapping("/save-data")
-    public ResponseEntity<String> saveGame(@RequestParam("playerId") int playerId, @RequestParam("robot") String robot,
-            @RequestParam("classe") String classe, @RequestParam("difficulty") String difficulty, HttpServletRequest request) {
-
-                if(!request.getHeader("X-UserID").equals(String.valueOf(playerId))) return ResponseEntity.badRequest().body("Unauthorized");
-
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-                LocalTime oraCorrente = LocalTime.now();
-                String oraFormattata = oraCorrente.format(formatter);
-
-                GameDataWriter gameDataWriter = new GameDataWriter();
-                // g.setGameId(gameDataWriter.getGameId());
-                Game g = new Game(playerId, "descrizione", "nome", difficulty);
-                // g.setPlayerId(pl);
-                // g.setPlayerClass(classe);
-                // g.setRobot(robot);
-                g.setData_creazione(LocalDate.now());
-                g.setOra_creazione(oraFormattata);
-                g.setClasse(classe);
-                // System.out.println(g.getUsername() + " " + g.getGameId());
-
-                // globalID = g.getGameId();
-
-                JSONObject ids = gameDataWriter.saveGame(g);
-
-                if(ids == null) return ResponseEntity.badRequest().body("Bad Request");
-
-                return ResponseEntity.ok(ids.toString());
-    }
 
     // @PostMapping("/download")
     // public ResponseEntity<Resource> downloadFile(@RequestParam("elementId")
@@ -239,9 +216,11 @@ public class GuiController {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<String, String>();
         formData.add("jwt", jwt);
 
-        Boolean isAuthenticated = restTemplate.postForObject("http://t23-g1-app-1:8080/validateToken", formData, Boolean.class);
+        Boolean isAuthenticated = restTemplate.postForObject("http://t23-g1-app-1:8080/validateToken", formData,
+                Boolean.class);
 
-        if(isAuthenticated == null || !isAuthenticated) return "redirect:/login";
+        if (isAuthenticated == null || !isAuthenticated)
+            return "redirect:/login";
         // model.addAttribute("robot", valuerobot);
         // model.addAttribute("classe", valueclass);
 
@@ -250,4 +229,46 @@ public class GuiController {
         return "editor";
     }
 
+    @PostMapping("/sendRobotVariables")
+    public ResponseEntity<String> receiveRobotVariable(@RequestParam("classe") String classe,
+            @RequestParam("robot") String robot, @RequestParam("difficulty") String difficulty) {
+
+        System.out.println("classe ricevuta: " + classe);
+        System.out.println("robot ricevuta: " + robot);
+        System.out.println("difficoltà ricevuta: " + difficulty);
+
+        LocalTime oraCorrente = LocalTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String oraFormattata = oraCorrente.format(formatter);
+
+        g.setClasse(classe);
+        g.setDifficulty(difficulty);
+        g.setRobot(robot);
+        g.setData_creazione(LocalDate.now());
+        g.setOra_creazione(oraFormattata);
+
+        return ResponseEntity.ok("Dati ricevuti con successo");
+    }
+
+    @PostMapping("/save-data")
+    public ResponseEntity<String> saveGame(@RequestParam("playerId") int playerId, HttpServletRequest request) {
+
+        if (!request.getHeader("X-UserID").equals(String.valueOf(playerId)))
+            return ResponseEntity.badRequest().body("Unauthorized");
+
+        g.setPlayerId(playerId);
+
+        g.setName("partita");
+
+        // System.out.println(g.getUsername() + " " + g.getGameId());
+
+        // globalID = g.getGameId();
+
+        JSONObject ids = gameDataWriter.saveGame(g);
+
+        if (ids == null)
+            return ResponseEntity.badRequest().body("Bad Request");
+
+        return ResponseEntity.ok(ids.toString());
+    }
 }

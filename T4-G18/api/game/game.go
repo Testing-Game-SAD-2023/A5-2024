@@ -11,13 +11,16 @@ type Game struct {
 	ID           int64      `json:"id"`
 	CurrentRound int        `json:"currentRound"`
 	Description  string     `json:"description"`
-	Difficulty   string     `json:"difficulty"`
+	Difficulty   string     `json:"difficulty"` // aggiunto (modifica int -> string)
 	CreatedAt    time.Time  `json:"createdAt"`
 	UpdatedAt    time.Time  `json:"updatedAt"`
 	StartedAt    *time.Time `json:"startedAt"`
 	ClosedAt     *time.Time `json:"closedAt"`
 	Name         string     `json:"name"`
 	Players      []Player   `json:"players,omitempty"`
+	Duration     string     `json:"duration"` // aggiunto
+	Robot        string     `json:"robot"`    // aggiunto
+	Class        string     `json:"class"`    // aggiunto
 }
 
 type Player struct {
@@ -32,6 +35,8 @@ type CreateRequest struct {
 	Difficulty  string     `json:"difficulty"`
 	StartedAt   *time.Time `json:"startedAt,omitempty"`
 	ClosedAt    *time.Time `json:"closedAt,omitempty"`
+	Robot       string     `json:"robot"` // aggiunto
+	Class       string     `json:"class"` // aggiunto
 }
 
 func (CreateRequest) Validate() error {
@@ -93,6 +98,9 @@ func fromModel(g *model.Game) Game {
 		StartedAt:    g.StartedAt,
 		ClosedAt:     g.ClosedAt,
 		Players:      parsePlayers(g.Players),
+		Duration:     g.Duration, // aggiunto
+		Robot:        g.Robot,    // aggiunto
+		Class:        g.Class,    // aggiunto
 	}
 
 }
